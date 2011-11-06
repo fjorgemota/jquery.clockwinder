@@ -1,28 +1,30 @@
 (function($) {
   $.fn.clockwinder = function(opts) {
     var options = $.extend({
-      postfix:'ago',
-      interval:30000,
+      postfix:decodeURIComponent('atr%C3%A1s'),
+      interval:1000,
       alwaysRelative:false,
       attr:'datetime'
     }, opts);
   
-    var elements = this;
-  
+    var elements = $(this).selector;
+	$(elements).live("clockwinder.update",function(){
+		$.clockwinder.update(this,options)
+	});
     setInterval(function() {
-      $.clockwinder.update(elements, options);
+      $(elements).trigger("clockwinder.update");
     }, options.interval);
-  
-    $.clockwinder.update(elements, options);
-
+  	$(elements).trigger("clockwinder.update");
     return this;
   }
 
   $.clockwinder = {
     update:function(elements, options) {
-      elements.each(function() {
-        var newTime = $.clockwinder.compute($(this).attr(options.attr), options);
-        
+      $(elements).each(function() {
+        var newTime = $.clockwinder.compute($(this).data(options.attr), options);
+        if(!newTime){
+			return false;
+		}
         if (options.displayFunction) {
           options.displayFunction.call(this, newTime, options);
         } else {
@@ -33,11 +35,13 @@
       });
     },
   
-    compute:function(timeStr, opts) {
+    compute:function(then, opts) {
+		
       var options = opts || {};
-      var then = Date.parse(timeStr);
       var today = new Date();
-
+if(!then){
+			return false;
+		}
       distance_in_milliseconds = today - then;
       distance_in_minutes = Math.round(Math.abs(distance_in_milliseconds / 60000));
 
@@ -59,7 +63,7 @@
       var time = hour + ':' + minutes + ' ' + ampm;
 
       if (distance_in_minutes > 1440 && distance_in_minutes < 2160) {
-        return 'yesterday at ' + time;
+        return 'ontem às ' + time;
       }
 
       var year = then.getFullYear().substr(2);
@@ -79,21 +83,21 @@
       seconds_ago = Math.floor((to  - from) / 1000);
       minutes_ago = Math.floor(seconds_ago / 60)
 
-      if(minutes_ago == 0) { return "about " + seconds_ago + " seconds";}
-      if(minutes_ago == 1) { return "about a minute";}
-      if(minutes_ago < 45) { return "about " + minutes_ago + " minutes";}
-      if(minutes_ago < 90) { return "about an hour";}
+      if(minutes_ago == 0) { return seconds_ago + " segundos";}
+      if(minutes_ago == 1) { return "um minuto";}
+      if(minutes_ago < 45) { return minutes_ago + " minutos";}
+      if(minutes_ago < 90) { return "uma hora";}
       hours_ago  = Math.round(minutes_ago / 60);
-      if(minutes_ago < 1440) { return "about " + hours_ago + " hours";}
-      if(minutes_ago < 2880) { return "about a day";}
+      if(minutes_ago < 1440) { return hours_ago + " horas";}
+      if(minutes_ago < 2880) { return "um dia";}
       days_ago  = Math.round(minutes_ago / 1440);
-      if(minutes_ago < 43200) { return "about " + days_ago + " days";}
-      if(minutes_ago < 86400) { return "about a month";}
+      if(minutes_ago < 43200) { return days_ago + " dias";}
+      if(minutes_ago < 86400) { return "um mês";}
       months_ago  = Math.round(minutes_ago / 43200);
-      if(minutes_ago < 525960) { return "about " + months_ago + " months";}
-      if(minutes_ago < 1051920) { return "about a year";}
+      if(minutes_ago < 525960) { return months_ago + " meses";}
+      if(minutes_ago < 1051920) { return "um ano";}
       years_ago  = Math.round(minutes_ago / 525960);
-      return "over " + years_ago + " years" 
+      return years_ago + " anos" 
     }
   }
 })(jQuery);
