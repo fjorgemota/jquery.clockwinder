@@ -17,7 +17,7 @@ Now load the page and watch the times update themselves!
 
 ## News
 
-The JQuery ClockWinder received a update (created by [Fernando Jorge Mota Profile][3] that translates the plugin to Portuguese Brazilian and can update news elements selected by the selector without the need of call to .clockwinder(); method.
+The JQuery ClockWinder received a update (created by [Fernando Jorge Mota][3] that translates the plugin to Portuguese Brazilian and can update news elements selected by the selector without the need of call to .clockwinder(); method.
 
 Also, the jQuery Clockwinder now get the date from the .data("datetime"); method of elements as a Date object, and not from the attribute "datetime". 
 
